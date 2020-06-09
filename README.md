@@ -1,7 +1,10 @@
-# Slim Project Cookiecutter
+# Slim Django Cookiecutter
 Version: 1.0.0
 
 ## Features
-- Create django application faster, using Django 2.2 & Django Rest Framework
-- Support to deploy this application via Ansible with Nginx as a load balancer
+- Quick build API service & web application with Django & Django Rest Framework
+- Deploy Django Service with gUnicorn and support asynchronous with Gevent
+- Deploy Nginx as Load Balancer
 - Auto generate/renew SSL with Let's Encrypt
+- Support scale-out django services
+
