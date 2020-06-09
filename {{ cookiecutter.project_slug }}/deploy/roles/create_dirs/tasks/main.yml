@@ -1,0 +1,45 @@
+---
+# project directory
+- name: check if "{{ deploy_project_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ deploy_project_dir }}"
+  register: stat_result
+
+- name: create "{{ deploy_project_dir }}"
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ deploy_project_dir }}"
+    state: directory
+
+# log directory for Django and gunicorn
+- name: check if "{{ log_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ log_dir }}"
+  register: stat_result
+
+- name: create "{{ log_dir }}"
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ log_dir }}"
+    state: directory
+
+# static file directory
+- name: check if "{{ static_root_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ static_root_dir }}"
+  register: stat_result
+
+- name: create "{{ static_root_dir }}"
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ static_root_dir }}"
+    state: directory

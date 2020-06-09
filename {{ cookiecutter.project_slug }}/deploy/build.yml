@@ -1,0 +1,10 @@
+---
+- name: clean build directory
+  hosts: localhost
+  roles:
+    - cleanup_temp_dir
+
+- name: build
+  hosts: localhost
+  roles:
+    - build

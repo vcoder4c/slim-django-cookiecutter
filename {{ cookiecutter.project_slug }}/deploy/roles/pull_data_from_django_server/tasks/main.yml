@@ -1,0 +1,53 @@
+- name: Remove "{{ static_data_temp_dir }}"
+  become: true
+  become_user: root
+  file:
+    state: absent
+    path: "{{ static_data_temp_dir }}"
+
+# static file directory
+- name: create "{{ static_data_temp_dir }}"
+  become: true
+  become_user: root
+  file:
+    path: "{{ static_data_temp_dir }}"
+    state: directory
+
+# static file directory (local)
+- name: create "{{ project_temp_root_dir }}/static/"
+  delegate_to: localhost
+  file:
+    path: "{{ project_temp_root_dir }}/static/"
+    state: directory
+
+- name: collectstatic
+  become: true
+  become_user: root
+  shell: "cd {{django_base_dir}}; /usr/bin/python3 -m pipenv run python manage.py collectstatic --noinput;"
+
+- name: sync from "{{ static_data_temp_dir }}" (remote) to "{{ project_temp_root_dir }}/static/" (local)
+  synchronize:
+    delete: yes
+    partial: yes
+    recursive: yes
+    mode: pull
+    dest: "{{ project_temp_root_dir }}/static/"
+    src: "{{ static_data_temp_dir }}"
+    use_ssh_args: yes
+
+#- name: compile docs in {{deploy_project_dir}}/docs
+#  when: env == "dev"
+#  become: true
+#  become_user: root
+#  shell: "cd {{ deploy_project_dir }}/docs; make clean;  python3 -m pipenv run make html;"
+#
+#- name: sync from "{{ deploy_project_dir }}/docs/_build/html/" (remote) to "{{ project_temp_root_dir }}/docs/" (local)
+#  when: env == "dev"
+#  synchronize:
+#    delete: yes
+#    partial: yes
+#    recursive: yes
+#    mode: pull
+#    dest: "{{ project_temp_root_dir }}/docs/"
+#    src: "{{ deploy_project_dir }}/docs/_build/html/"
+#    use_ssh_args: yes

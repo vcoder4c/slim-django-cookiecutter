@@ -1,0 +1,3 @@
+---
+# This value must be as same as STATIC_ROOT in Django setting
+static_data_temp_dir: "/tmp/project/static/"

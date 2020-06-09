@@ -1,0 +1,35 @@
+---
+organization: {{ cookiecutter.organization }}
+project_name: {{ cookiecutter.project_slug }}
+
+service_name: "{{ cookiecutter.organization }}_{{ cookiecutter.project_slug }}"
+upstream_name: "{{ cookiecutter.organization }}_{{ cookiecutter.project_slug }}_live_backend"
+server_host: {{ cookiecutter.domain }}
+django_port: {{ cookiecutter.django_port }}
+env: live
+
+deploy_project_dir: "/data/src/{{ cookiecutter.organization }}/{{ cookiecutter.project_slug }}/"
+log_dir: "/var/log/{{ cookiecutter.organization }}/{{ cookiecutter.project_slug }}/"
+static_root_dir: "/var/www/{{ cookiecutter.domain }}/static/"
+doc_root_dir: "/var/www/{{ cookiecutter.domain }}/docs/"
+
+has_certificate: no
+
+django_dir: "{{ cookiecutter.project_slug }}"
+django_default_app: "{{ cookiecutter.project_slug }}"
+django_base_dir: "/data/src/{{ cookiecutter.organization }}/{{ cookiecutter.project_slug }}/{{ cookiecutter.project_slug }}/"
+
+# Gunicorn configuration
+workers: 3
+worker_class: 'gevent'
+
+# directories for building locally
+build_name: "{{ cookiecutter.project_slug }}"
+project_temp_root_dir: "/tmp/{{ cookiecutter.project_slug }}"
+temp_dir: "/tmp/{{ cookiecutter.project_slug }}/temp/"
+dist_dir: "/tmp/{{ cookiecutter.project_slug }}/build/"
+
+# source code
+# TODO: fill the git link here in order to do deployment via Ansible
+git_repo: "source git"
+git_branch: master

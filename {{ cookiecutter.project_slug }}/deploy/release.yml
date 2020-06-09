@@ -1,0 +1,31 @@
+---
+- name: release
+  hosts:
+    - django_server_hosts
+  roles:
+    - release
+
+- name: db migration
+  hosts:
+    - django_server_hosts[0]
+  roles:
+    - db_migration
+
+- name: pull data from django server
+  hosts:
+    - django_server_hosts[0]
+  vars:
+    static_data_temp_dir: "/tmp/static/"
+  roles:
+    - pull_data_from_django_server
+
+- name: push data to load balancers
+  hosts:
+    - load_balancer
+  roles:
+    - push_data_to_load_balancers
+
+- name: setup load balancer
+  hosts: load_balancer
+  roles:
+    - setup_load_balancer

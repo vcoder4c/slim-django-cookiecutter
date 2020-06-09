@@ -1,0 +1,3 @@
+---
+nginx_conf_file: "/etc/nginx/sites-enabled/{{server_host}}"
+update_nginx: 0

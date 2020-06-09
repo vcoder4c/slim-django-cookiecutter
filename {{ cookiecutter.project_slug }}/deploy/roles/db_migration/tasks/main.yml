@@ -1,0 +1,7 @@
+---
+
+- name: migrate
+#  when: env == "dev"
+  become: true
+  become_user: root
+  shell: "cd {{django_base_dir}}; python3 -m pipenv run python manage.py migrate;"

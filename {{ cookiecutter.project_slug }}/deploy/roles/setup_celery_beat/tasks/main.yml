@@ -1,0 +1,26 @@
+---
+- name: generate systemd config for celery beat
+  template:
+    src: templates/celery_beat.service
+    dest: "/lib/systemd/system/{{service_name}}_celery_beat.service"
+  become: yes
+  become_user: root
+
+
+- name: force systemd to reread configs
+  become: yes
+  become_user: root
+  systemd:
+    daemon_reload: yes
+
+
+- name: restart celery beat service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+    masked: no
+    name: "{{service_name}}_celery_beat"
+  changed_when: True
+  become: true
+  become_user: root

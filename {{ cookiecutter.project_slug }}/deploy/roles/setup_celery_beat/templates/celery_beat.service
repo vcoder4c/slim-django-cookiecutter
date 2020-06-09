@@ -1,0 +1,15 @@
+[Unit]
+Description={{project_name}} Celery Beat Service
+After=network.target
+
+[Service]
+Type=simple
+RuntimeDirectory={{celery_run_dir}}
+WorkingDirectory={{django_base_dir}}
+RuntimeDirectoryPreserve=yes
+ExecStart=/usr/bin/python3 -m pipenv run python -m celery beat -A {{project_name}} --pidfile=/var/run/{{celery_run_dir}}/beat.pid --logfile={{beat_log_file}} --loglevel={{beat_log_level}}
+ExecStop=/bin/kill -9 $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

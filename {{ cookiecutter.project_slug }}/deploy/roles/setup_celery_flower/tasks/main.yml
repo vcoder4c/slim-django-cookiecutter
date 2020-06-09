@@ -1,0 +1,23 @@
+---
+- name: generate systemd config for celery flower
+  template:
+    src: templates/flower.service
+    dest: "/lib/systemd/system/{{service_name}}_celery_flower.service"
+  become: yes
+  become_user: root
+
+
+- name: force systemd to reread configs
+  become: yes
+  become_user: root
+  systemd:
+    daemon_reload: yes
+
+
+- name: ensure celery flower service is running
+  become: true
+  become_user: root
+  service:
+    state: started
+    name: "{{service_name}}_celery_flower"
+  changed_when: True

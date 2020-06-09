@@ -1,0 +1,51 @@
+- name: check if "{{ static_root_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ static_root_dir }}"
+  register: stat_result
+
+- name: create "{{ static_root_dir }}"
+  become: true
+  become_user: root
+  when: not stat_result.stat.exists
+  file:
+    path: "{{ static_root_dir }}"
+    state: directory
+
+- name: sync from "{{ project_temp_root_dir }}/static/" to "{{ static_root_dir }}"
+  become: true
+  become_user: root
+  synchronize:
+    delete: yes
+    partial: yes
+    recursive: yes
+    dest: "{{ static_root_dir }}"
+    src: "{{ project_temp_root_dir }}/static/"
+    use_ssh_args: yes
+
+#- name: check if "{{ doc_root_dir }}" exists
+#  when: env == "dev"
+#  become: true
+#  become_user: root
+#  stat: path="{{ doc_root_dir }}"
+#  register: stat_result
+#
+#- name: create "{{ doc_root_dir }}"
+#  become: true
+#  become_user: root
+#  when: not stat_result.stat.exists and env == "dev"
+#  file:
+#    path: "{{ doc_root_dir }}"
+#    state: directory
+
+#- name: sync from "{{ project_temp_root_dir }}/docs/" to "{{ doc_root_dir }}"
+#  when: env == "dev"
+#  become: true
+#  become_user: root
+#  synchronize:
+#    delete: yes
+#    partial: yes
+#    recursive: yes
+#    dest: "{{ doc_root_dir }}"
+#    src: "{{ project_temp_root_dir }}/docs/"
+#    use_ssh_args: yes

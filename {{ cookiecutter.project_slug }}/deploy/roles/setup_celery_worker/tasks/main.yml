@@ -1,0 +1,26 @@
+---
+- name: generate systemd config for worker
+  template:
+    src: templates/celery.service
+    dest: "/lib/systemd/system/{{service_name}}_celery_worker.service"
+  become: yes
+  become_user: root
+
+
+- name: force systemd to reread configs
+  become: yes
+  become_user: root
+  systemd:
+    daemon_reload: yes
+
+
+- name: reload celery worker service
+  systemd:
+    state: reloaded
+    daemon_reload: yes
+    enabled: yes
+    masked: no
+    name: "{{service_name}}_celery_worker"
+  changed_when: True
+  become: true
+  become_user: root

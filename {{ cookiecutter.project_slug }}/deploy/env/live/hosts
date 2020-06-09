@@ -1,0 +1,7 @@
+live-1 ansible_host=[public ip] private_ip=[private ip]
+
+[django_server_hosts]
+live-1
+
+[load_balancer]
+live-1

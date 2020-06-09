@@ -1,0 +1,40 @@
+---
+- name: send email
+  become: yes
+  become_user: root
+  cron:
+    name: send email
+    backup: yes
+    minute: "*/5"
+    job: "flock -xn /var/tmp/send_email.lock -c 'cd {{ django_base_dir }}; /usr/bin/python3 -m pipenv run python manage.py send_email  >> {{ log_dir }}crontab.log 2>&1'"
+
+
+#- name: Download new offers from chotot.com
+#  become: yes
+#  become_user: root
+#  cron:
+#    name: download new offers from chotot.com
+#    backup: yes
+#    minute: "*/7"
+#    job: "flock -xn /var/tmp/chotot_download_offer.lock -c 'cd {{ django_base_dir }}; /usr/bin/python3 -m pipenv run python manage.py chotot_download_offer  >> {{ log_dir }}crontab.log 2>&1'"
+#
+#
+#- name: Extract new offers from chotot.com
+#  become: yes
+#  become_user: root
+#  cron:
+#    name: extract new offers from chotot.com
+#    backup: yes
+#    minute: "*/11"
+#    job: "flock -xn /var/tmp/chotot_extract_offer.lock -c 'cd {{ django_base_dir }}; /usr/bin/python3 -m pipenv run python manage.py chotot_extract_ads  >> {{ log_dir }}crontab.log 2>&1'"
+#
+
+#- name: Find offers from chotot.com
+#  become: yes
+#  become_user: root
+#  cron:
+#    name: find offers from chotot.com
+#    backup: yes
+#    hour: 0
+#    minute: 30
+#    job: "flock -xn /var/tmp/chotot_find_potential_offer.lock -c 'cd {{ django_base_dir }}; /usr/bin/python3 -m pipenv run python manage.py chotot_find_potential_offer  >> {{ log_dir }}crontab.log 2>&1'"

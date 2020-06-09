@@ -1,0 +1,29 @@
+---
+- name: reload {{ service_name }} service
+  become: true
+  become_user: root
+  service:
+    name: "{{ service_name }}"
+    enabled: yes
+    state: reloaded
+
+- pause: seconds={{ restart_wait_time }}
+
+- name: get {{ service_name }} status
+  command: "systemctl status {{item}}"
+  register: status_results
+  changed_when: False
+  failed_when: False
+  with_items: "{{service_name}}"
+  tags:
+    - check_liveness
+
+- debug: var=item.stdout_lines
+  with_items: "{{status_results.results}}"
+
+- name: check liveness
+  fail:
+    msg: "{{item.item}} failed."
+  when: "item.rc != 0"
+  no_log: True
+  with_items: "{{status_results.results}}"

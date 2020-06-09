@@ -1,0 +1,9 @@
+---
+max_requests: 20480
+workers: 4
+worker_class: 'gevent'
+graceful_timeout: 300  # master force kill children after 300s when restarting
+timeout: 1200 # master force kill children if children are unresponsive after this time
+keepalive: 86400
+chdir: "{{django_base_dir}}/"
+errorlog: "{{log_dir}}/gunicorn.log"

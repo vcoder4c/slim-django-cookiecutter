@@ -1,0 +1,12 @@
+---
+# see https://github.com/ansible/ansible/issues/4676
+# see http://unix.stackexchange.com/questions/122616/why-do-i-need-a-tty-to-run-sudo-if-i-can-sudo-without-a-password
+- name: ensure 'Defaults    requiretty' not present in /etc/sudoers
+  when: check_tty
+  replace:
+    backup: yes
+    dest: /etc/sudoers
+    regexp: "Defaults[ \t]*requiretty"
+    replace: "Defaults    !requiretty"
+  become: true
+  become_user: root

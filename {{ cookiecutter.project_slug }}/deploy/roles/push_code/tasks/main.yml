@@ -1,0 +1,48 @@
+---
+# git_repo: role default variable
+# git_branch: group variable
+# temp_dir: role default variable
+- name: sync from localhost to {{ server_host }}:{{ deploy_project_dir }}
+  become: true
+  become_user: root
+  when: jenkins_deploy
+  synchronize:
+    delete: yes
+    partial: yes
+    recursive: yes
+    dest: "{{ deploy_project_dir }}"
+    src: "{{ playbook_dir }}/../"
+    use_ssh_args: yes
+
+- name: checkout "{{git_repo}}" "{{git_branch}}" to "{{ temp_dir }}"
+  run_once: true
+  delegate_to: 127.0.0.1
+  local_action: git
+  when: not jenkins_deploy
+  args:
+    repo: "{{git_repo}}"
+    accept_hostkey: True
+    recursive: yes
+    remote: origin
+    dest: "{{ temp_dir }}"
+    version: "{{git_branch}}"
+    update: yes
+
+- name: sync from "{{ temp_dir }}" to "{{ deploy_project_dir }}"
+  become: true
+  become_user: root
+  when: not jenkins_deploy
+  synchronize:
+    delete: yes
+    partial: yes
+    recursive: yes
+    dest: "{{ deploy_project_dir }}"
+    src: "{{ temp_dir }}"
+    use_ssh_args: yes
+
+- name: Clean "{{ temp_dir }}"
+  run_once: true
+  delegate_to: 127.0.0.1
+  file:
+    state: absent
+    path: "{{ temp_dir }}"

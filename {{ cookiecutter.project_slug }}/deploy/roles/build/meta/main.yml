@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: checkout_code }
+#  - { role: checkout_sensitive_data }

@@ -1,0 +1,13 @@
+[Unit]
+Description={{service_description}}
+
+[Service]
+Type=simple
+WorkingDirectory={{django_base_dir}}
+PIDFile={{deploy_project_dir}}/deploy/pid
+ExecStart={{start_command}}
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+Alias={{service_name}}

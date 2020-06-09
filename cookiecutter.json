@@ -1,0 +1,14 @@
+{
+  "organization": "vcoder",
+  "project_name": "sample",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "author": "Bao Doan N.",
+  "year": "{% now 'utc', '%Y' %}",
+  "description": "A sample project",
+  "domain": "sample.vcoder.software",
+  "django_port": 8711,
+  "_copy_without_render": [
+    "deploy/roles/*"
+  ],
+  "_extensions": ["jinja2_time.TimeExtension"]
+}

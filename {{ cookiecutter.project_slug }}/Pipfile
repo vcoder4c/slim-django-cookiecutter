@@ -1,0 +1,23 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+sphinx = "*"
+sphinxcontrib-seqdiag = "*"
+sphinx_rtd_theme = "*"
+
+[packages]
+django = "==2.2.12"
+djangorestframework = "*"
+cloudinary = "*"
+gunicorn = "*"
+gevent = "*"
+pillow = "*"
+python-slugify = "*"
+django-extensions = "*"
+sentry-sdk = "*"
+
+[requires]
+python_version = "3.7"
