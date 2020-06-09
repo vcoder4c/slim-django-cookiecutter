@@ -9,7 +9,7 @@ sphinxcontrib-seqdiag = "*"
 sphinx_rtd_theme = "*"
 
 [packages]
-django = "==2.2.12"
+django = "==2.2.13"
 djangorestframework = "*"
 cloudinary = "*"
 gunicorn = "*"
