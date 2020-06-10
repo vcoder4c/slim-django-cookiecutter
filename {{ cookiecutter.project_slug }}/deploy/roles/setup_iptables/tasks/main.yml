@@ -3,7 +3,7 @@
   blockinfile:
     path: "{{ iptables_config_file }}"
     block: |
-      -A INPUT -s {{ hostvars[item]['private_ip'] }}  -p tcp --dport {{ server_port }} -j ACCEPT
+      -A INPUT -s {{ hostvars[item]['private_ip'] }}  -p tcp --dport {{ django_port }} -j ACCEPT
     marker: "# {mark} {{project_name}} {{ item }}"
     insertafter: ":OUTPUT\\s*ACCEPT\\s*\\[\\d+:\\d+\\]"
     create: no

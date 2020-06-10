@@ -8,7 +8,7 @@ upstream {{upstream_name}} {
     ip_hash;
     # If the current host is not the backup, then select the backup servers from the ansible_play_hosts and setup
 {% for host in groups['django_server_hosts'] %}
-    server {{ hostvars[host]['private_ip'] }}:{{server_port}};
+    server {{ hostvars[host]['private_ip'] }}:{{django_port}};
 {% endfor %}
 }
 
