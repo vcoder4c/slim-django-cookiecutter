@@ -1,5 +1,0 @@
----
-dependencies:
-  - { role: setup_celery_worker }
-  - { role: setup_celery_beat }
-  - { role: setup_celery_flower }

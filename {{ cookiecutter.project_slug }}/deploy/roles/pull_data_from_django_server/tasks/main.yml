@@ -23,7 +23,7 @@
 - name: collectstatic
   become: true
   become_user: root
-  shell: "cd {{django_base_dir}}; /usr/bin/python3 -m pipenv run python manage.py collectstatic --noinput;"
+  shell: "cd {{django_base_dir}}; /usr/bin/python3.7 -m pipenv run python manage.py collectstatic --noinput;"
 
 - name: sync from "{{ static_data_temp_dir }}" (remote) to "{{ project_temp_root_dir }}/static/" (local)
   synchronize:
@@ -39,7 +39,7 @@
 #  when: env == "dev"
 #  become: true
 #  become_user: root
-#  shell: "cd {{ deploy_project_dir }}/docs; make clean;  python3 -m pipenv run make html;"
+#  shell: "cd {{ deploy_project_dir }}/docs; make clean;  python3.7 -m pipenv run make html;"
 #
 #- name: sync from "{{ deploy_project_dir }}/docs/_build/html/" (remote) to "{{ project_temp_root_dir }}/docs/" (local)
 #  when: env == "dev"

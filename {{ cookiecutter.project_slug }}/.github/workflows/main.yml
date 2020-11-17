@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ master ]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - run: git checkout master
+      - run: git checkout ${{ github.event.pull_request.head.sha }}
+
+      - name: Git Pylint Github Action
+        uses: vcoder4c/git_pylint@v1
+
+  smock-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+          architecture: x64
+      - run: cp ./preview/preview/ci.py ./preview/preview/settings.py
+      - run: pip install pipenv
+      - run: pipenv sync -d
+      - run: cd ./preview && pipenv run python manage.py check
+      - run: cd ./preview && pipenv run python manage.py makemigrations --check
+      - run: cd ./preview && pipenv run python manage.py migrate
+      - run: cd ./preview && pipenv run coverage run manage.py test
+      - run: cd ./preview && pipenv run coverage report --fail-under=37

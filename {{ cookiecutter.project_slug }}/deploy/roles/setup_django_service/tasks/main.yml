@@ -1,0 +1,33 @@
+---
+# 1. Setup gunicorn
+- name: generate gunicorn config
+  template:
+    src: templates/gunicorn.template.py
+    dest: "{{deploy_project_dir}}/deploy/gunicorn.py"
+  become: yes
+  become_user: root
+
+- name: touch gunicorn log "{{errorlog}}"
+  become: yes
+  become_user: root
+  file:
+    path: "{{errorlog}}"
+    state: touch
+
+- name: register start command "/usr/bin/python3.7 -m pipenv run gunicorn -c {{deploy_project_dir}}/deploy/gunicorn.py {{django_default_app}}.wsgi"
+  set_fact:
+    start_command: "/usr/bin/python3.7 -m pipenv run gunicorn -c {{deploy_project_dir}}/deploy/gunicorn.py {{django_default_app}}.wsgi"
+
+# 2. Setup Linux Service
+- name: generate systemd config
+  template:
+    src: templates/systemd
+    dest: "/lib/systemd/system/{{service_name}}.service"
+  become: yes
+  become_user: root
+
+- name: force systemd to reread configs
+  become: yes
+  become_user: root
+  systemd:
+    daemon_reload: yes

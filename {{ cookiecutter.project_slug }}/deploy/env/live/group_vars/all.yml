@@ -13,8 +13,6 @@ log_dir: "/var/log/{{ cookiecutter.organization }}/{{ cookiecutter.project_slug 
 static_root_dir: "/var/www/{{ cookiecutter.domain }}/static/"
 doc_root_dir: "/var/www/{{ cookiecutter.domain }}/docs/"
 
-has_certificate: no
-
 django_dir: "{{ cookiecutter.project_slug }}"
 django_default_app: "{{ cookiecutter.project_slug }}"
 django_base_dir: "/data/src/{{ cookiecutter.organization }}/{{ cookiecutter.project_slug }}/{{ cookiecutter.project_slug }}/"

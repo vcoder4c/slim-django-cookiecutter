@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: create_dirs }
-  - { role: remove_requiretty }

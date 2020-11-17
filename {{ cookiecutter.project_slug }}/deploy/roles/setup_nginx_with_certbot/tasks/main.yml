@@ -1,0 +1,54 @@
+---
+# 1. Compose nginx config file
+- name: create nginx config file "{{nginx_conf_file}}"
+  become: yes
+  become_user: root
+  template:
+    src: templates/nginx_conf
+    dest: "{{nginx_conf_file}}"
+
+# 2. Install Certbot
+- name: add certbot repository
+  become: yes
+  become_user: root
+  apt_repository:
+    repo: ppa:certbot/certbot
+    state: present
+
+- name: install python-certbot-nginx
+  become: yes
+  become_user: root
+  package:
+    name: python-certbot-nginx
+    state: present
+
+# 3. Using Certbot to update Nginx config
+# Note: due to we are using wildcard SSL so have to generate it manually at the first time
+#- name: using certbot to update config file
+#  become: true
+#  become_user: root
+#  shell: "certbot --nginx --non-interactive --agree-tos --redirect --domains {{server_host}} --email doanngocbao@gmail.com"
+#
+#- name: renew letencrypt certificate
+#  become: yes
+#  become_user: root
+#  cron:
+#    name: renew letencrypt certificate
+#    backup: yes
+#    hour: 0
+#    minute: 0
+#    job: "certbot renew > /dev/null"
+
+# 4. Reload Nginx
+- name: test nginx config
+  become: true
+  become_user: root
+  shell: "nginx -t"
+
+- name: reload nginx service
+  become: true
+  become_user: root
+  service:
+    name: nginx
+    enabled: yes
+    state: reloaded

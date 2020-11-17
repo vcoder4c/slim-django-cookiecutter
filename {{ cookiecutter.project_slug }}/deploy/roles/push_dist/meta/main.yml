@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: backup_project_dir }

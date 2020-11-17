@@ -1,0 +1,143 @@
+---
+# 1. Make sure all required directories are created
+# 1.1 Project directory - where we store source code. Do backup if necessary
+- name: check if {{ inventory_hostname }}:{{ deploy_project_dir }} exist
+  become: true
+  become_user: root
+  stat: path="{{ deploy_project_dir }}"
+  register: stat_result
+
+- name: create {{ inventory_hostname }}:{{ deploy_project_dir }} if not exist
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ deploy_project_dir }}"
+    state: directory
+
+- name: get timestamp to prepare backup for previous deployment source code
+  when: stat_result.stat.exists
+  shell: "date +%Y-%m-%d_%Hh%Mm%Ss_%Z"
+  register: timestamp
+  changed_when: false
+
+- name: backup {{ inventory_hostname }}:{{ deploy_project_dir }}
+  when: stat_result.stat.exists
+  command: "cp -r {{ deploy_project_dir }} {{ project_name }}_{{ timestamp.stdout }}"
+  args:
+    chdir: "{{ deploy_project_dir }}/../"
+  become: true
+  become_user: root
+
+# 1.2 Log directory for django & gunicorn
+- name: check if "{{ log_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ log_dir }}"
+  register: stat_result
+
+- name: create "{{ log_dir }}"
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ log_dir }}"
+    state: directory
+
+# 1.3 Static directory
+- name: check if "{{ static_root_dir }}" exists
+  become: true
+  become_user: root
+  stat: path="{{ static_root_dir }}"
+  register: stat_result
+
+- name: create "{{ static_root_dir }}"
+  when: not stat_result.stat.exists
+  become: true
+  become_user: root
+  file:
+    path: "{{ static_root_dir }}"
+    state: directory
+
+# 2. Backup code from previous deployment
+# 2.1 Check whether code is existed from previous deployment
+- name: check if {{ inventory_hostname }}:{{ deploy_project_dir }} exist
+  stat: path="{{ deploy_project_dir }}"
+  register: stat_result
+  become: true
+  become_user: root
+
+# 3. Push code to destination hosts
+- name: register stat "{{ dist_dir }}"
+  delegate_to: localhost
+  stat:
+    path: "{{ dist_dir }}"
+  register: dist_path
+
+- name: check "{{ dist_dir }}"
+  when: dist_path.stat.exists != True or dist_path.stat.isdir != True
+  fail:
+    msg: "Check {{ dist_dir }} failed."
+
+- name: sync from "{{ dist_dir }}" to "{{ deploy_project_dir }}"
+  become: true
+  become_user: root
+  synchronize:
+    delete: yes
+    partial: yes
+    recursive: yes
+    dest: "{{ deploy_project_dir }}"
+    src: "{{ dist_dir }}"
+    use_ssh_args: yes
+
+# 4. Make sure setting file is created base on environment
+- name: Create settings file
+  copy:
+    remote_src: yes
+    src: "{{ django_base_dir }}/{{ django_default_app }}/envs/{{ env }}/settings.py"
+    dest: "{{ django_base_dir }}/{{ django_default_app }}/settings.py"
+  become: true
+  become_user: root
+
+# 5. Install requirement for django
+- name: install python3.7 & required dependencies
+  package:
+    name: "{{item}}"
+    state: present
+  become: yes
+  become_user: root
+  with_items:
+    - python3.7
+    - python3.7-dev
+    - libssl-dev
+    - libmysqlclient-dev
+    - gettext
+    - python3-pip
+
+- name: install pip 3.7
+  command: python3.7 -m pip install --upgrade pip
+
+- name: Install pipenv with python3.7
+  command: python3.7 -m pip install pipenv
+  become: yes
+  become_user: root
+
+- name: install python packages {% if env == "dev"%}-d{% endif %}
+  become: true
+  become_user: root
+  command: python3.7 -m pipenv sync {% if env == "dev"%}-d{% endif %} --sequential
+  args:
+    chdir: "{{ deploy_project_dir }}"
+
+# 6. Compile message for django in case we support localization
+#- name: compile messages
+#  become: true
+#  become_user: root
+#  shell: "cd {{django_base_dir}}; python3.7 -m pipenv run python manage.py compilemessages;"
+
+# 7. Do migration for django
+#- name: migrate
+##  when: env == "dev"
+#  become: true
+#  become_user: root
+#  shell: "cd {{django_base_dir}}; python3.7 -m pipenv run python manage.py migrate;"

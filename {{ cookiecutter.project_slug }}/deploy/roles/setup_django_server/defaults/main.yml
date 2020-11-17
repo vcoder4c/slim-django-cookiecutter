@@ -1,2 +1,0 @@
----
-settings_dir: "{{django_base_dir}}/{{django_default_app}}/env"

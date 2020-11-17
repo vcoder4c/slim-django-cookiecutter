@@ -1,5 +1,0 @@
----
-dependencies:
-  - { role: build }
-  - { role: release }
-  - { role: setup_load_balancer }

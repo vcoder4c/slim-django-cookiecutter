@@ -1,5 +1,0 @@
----
-dependencies:
-  - { role: create_dirs }
-  - { role: push_dist }
-  - { role: install_requirements }

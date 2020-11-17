@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: register_start_command }

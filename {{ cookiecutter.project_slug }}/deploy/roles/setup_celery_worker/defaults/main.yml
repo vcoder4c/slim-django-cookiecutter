@@ -1,4 +1,0 @@
----
-celery_run_dir: celery # relative path on /var/run
-worker_log_level: INFO
-worker_opts: --time-limit=300 --concurrency=8

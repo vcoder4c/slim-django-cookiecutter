@@ -1,0 +1,3 @@
+---
+nginx_conf_file: "/etc/nginx/sites-enabled/{{server_host}}"
+upstream_name: "{{project_name}}_backend"

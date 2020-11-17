@@ -1,15 +1,10 @@
 ---
-- name: release
+- name: setup django service
   hosts:
     - django_server_hosts
   roles:
-    - release
-
-- name: db migration
-  hosts:
-    - django_server_hosts[0]
-  roles:
-    - db_migration
+    - setup_django_service
+    - restart_django_service
 
 - name: pull data from django server
   hosts:
@@ -28,4 +23,5 @@
 - name: setup load balancer
   hosts: load_balancer
   roles:
-    - setup_load_balancer
+#    - setup_nginx_with_cert
+    - setup_nginx_with_certbot
